@@ -1,0 +1,668 @@
+definitions:
+  ai.Chat:
+    properties:
+      msg:
+        type: string
+      token:
+        type: string
+    type: object
+  blog.Blog:
+    properties:
+      _id:
+        type: string
+      gelisme:
+        items:
+          type: string
+        type: array
+      giris:
+        type: string
+      img:
+        type: string
+      "off":
+        type: string
+      sonuc:
+        type: string
+      title:
+        type: string
+    type: object
+  iller.Iller:
+    properties:
+      _id:
+        type: string
+      counties:
+        items:
+          properties:
+            districts:
+              items:
+                properties:
+                  name:
+                    type: string
+                  neighborhoods:
+                    items:
+                      properties:
+                        code:
+                          type: string
+                        name:
+                          type: string
+                      type: object
+                    type: array
+                type: object
+              type: array
+            name:
+              type: string
+          type: object
+        type: array
+      name:
+        type: string
+      plaka:
+        type: integer
+    type: object
+  login.Login:
+    properties:
+      phone:
+        type: string
+      token:
+        type: string
+      user:
+        type: string
+    type: object
+  login.Otp:
+    properties:
+      code:
+        type: string
+      phone:
+        type: string
+    type: object
+  notification.HealthRecommendations:
+    properties:
+      athletes:
+        type: string
+      children:
+        type: string
+      elderly:
+        type: string
+      generalPopulation:
+        type: string
+      heartDiseasePopulation:
+        type: string
+      lungDiseasePopulation:
+        type: string
+      pregnantWomen:
+        type: string
+    type: object
+  notification.Notification:
+    properties:
+      address:
+        type: string
+      date:
+        type: string
+      healthRecommendations:
+        $ref: '#/definitions/notification.HealthRecommendations'
+      id:
+        type: string
+      image:
+        type: string
+      mdate:
+        type: string
+      message:
+        type: string
+      ndate:
+        type: string
+      nid:
+        type: string
+      read:
+        type: boolean
+      title:
+        type: string
+      type:
+        type: string
+      user:
+        type: string
+    type: object
+  notification.PushToken:
+    properties:
+      fcmToken:
+        type: string
+      token:
+        type: string
+    type: object
+  user.Address:
+    properties:
+      address:
+        maxLength: 250
+        minLength: 5
+        type: string
+      default:
+        type: boolean
+      il:
+        type: string
+      ilce:
+        type: string
+      lat:
+        type: number
+      lng:
+        type: number
+      mahalle:
+        maxLength: 250
+        minLength: 5
+        type: string
+      name:
+        maxLength: 20
+        minLength: 2
+        type: string
+      notify:
+        type: boolean
+      sokak:
+        type: string
+      urgent:
+        type: boolean
+      userId:
+        type: string
+    required:
+    - name
+    type: object
+  user.Language:
+    enum:
+    - Turkish
+    type: string
+    x-enum-varnames:
+    - Turkish
+  user.Role:
+    enum:
+    - Member
+    type: string
+    x-enum-varnames:
+    - Member
+  user.User:
+    properties:
+      _id:
+        type: string
+      address:
+        items:
+          $ref: '#/definitions/user.Address'
+        type: array
+      avatar:
+        type: string
+      date:
+        type: string
+      email:
+        type: string
+      fcmToken:
+        type: string
+      lang:
+        items:
+          $ref: '#/definitions/user.Language'
+        type: array
+      name:
+        maxLength: 50
+        minLength: 5
+        type: string
+      phone:
+        type: string
+      role:
+        items:
+          $ref: '#/definitions/user.Role'
+        type: array
+      tags:
+        items:
+          type: string
+        type: array
+    required:
+    - email
+    - name
+    - phone
+    type: object
+  utils.ResponseHTTP:
+    properties:
+      data: {}
+      message:
+        type: string
+      success:
+        type: boolean
+    type: object
+info:
+  contact: {}
+  title: UstAI
+  version: "1.0"
+paths:
+  /api/v1/address/ilceler/:il:
+    get:
+      consumes:
+      - application/json
+      description: Get Ilceler List
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.ResponseHTTP'
+            - properties:
+                data:
+                  $ref: '#/definitions/iller.Iller'
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/utils.ResponseHTTP'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/utils.ResponseHTTP'
+      security:
+      - Bearer: []
+      summary: Ilceler List
+      tags:
+      - ILLER
+  /api/v1/address/iller:
+    get:
+      consumes:
+      - application/json
+      description: Get Iller List
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.ResponseHTTP'
+            - properties:
+                data:
+                  $ref: '#/definitions/iller.Iller'
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/utils.ResponseHTTP'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/utils.ResponseHTTP'
+      security:
+      - Bearer: []
+      summary: Iller List
+      tags:
+      - ILLER
+  /api/v1/ai:
+    post:
+      consumes:
+      - application/json
+      description: AI
+      parameters:
+      - description: chat ai
+        in: body
+        name: '{object}'
+        required: true
+        schema:
+          $ref: '#/definitions/ai.Chat'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/utils.ResponseHTTP'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.ResponseHTTP'
+      security:
+      - Bearer: []
+      summary: AI
+      tags:
+      - AI
+  /api/v1/auth/login:
+    post:
+      consumes:
+      - application/json
+      description: Login
+      parameters:
+      - description: Login login
+        in: body
+        name: '{object}'
+        required: true
+        schema:
+          $ref: '#/definitions/login.Login'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.ResponseHTTP'
+            - properties:
+                data:
+                  $ref: '#/definitions/login.Login'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.ResponseHTTP'
+      summary: Login
+      tags:
+      - login
+  /api/v1/auth/otp:
+    post:
+      consumes:
+      - application/json
+      description: Login
+      parameters:
+      - description: Otp login
+        in: body
+        name: '{object}'
+        required: true
+        schema:
+          $ref: '#/definitions/login.Otp'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.ResponseHTTP'
+            - properties:
+                data:
+                  $ref: '#/definitions/login.Otp'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.ResponseHTTP'
+      summary: Login
+      tags:
+      - login
+  /api/v1/auth/register:
+    post:
+      consumes:
+      - application/json
+      description: Register User
+      parameters:
+      - description: Register usernotify
+        in: body
+        name: usernotify
+        required: true
+        schema:
+          $ref: '#/definitions/user.User'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.ResponseHTTP'
+            - properties:
+                data:
+                  $ref: '#/definitions/user.User'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.ResponseHTTP'
+      summary: Register a new usernotify
+      tags:
+      - login
+  /api/v1/blog/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get GetBlog
+      parameters:
+      - description: Blog id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.ResponseHTTP'
+            - properties:
+                data:
+                  $ref: '#/definitions/blog.Blog'
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/utils.ResponseHTTP'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/utils.ResponseHTTP'
+      security:
+      - Bearer: []
+      summary: GetBlog
+      tags:
+      - Blog
+  /api/v1/blog/list:
+    get:
+      consumes:
+      - application/json
+      description: Get GetList List
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.ResponseHTTP'
+            - properties:
+                data:
+                  $ref: '#/definitions/blog.Blog'
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/utils.ResponseHTTP'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/utils.ResponseHTTP'
+      security:
+      - Bearer: []
+      summary: GetList List
+      tags:
+      - Blog
+  /api/v1/notification/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: DeleteNotification
+      parameters:
+      - description: string valid
+        in: path
+        maxLength: 50
+        minLength: 5
+        name: id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.ResponseHTTP'
+            - properties:
+                data:
+                  $ref: '#/definitions/notification.Notification'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.ResponseHTTP'
+      security:
+      - Bearer: []
+      summary: DeleteNotification
+      tags:
+      - Notification
+    get:
+      consumes:
+      - application/json
+      description: GetNotification User
+      parameters:
+      - description: string valid
+        in: path
+        maxLength: 40
+        minLength: 5
+        name: id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.ResponseHTTP'
+            - properties:
+                data:
+                  $ref: '#/definitions/notification.Notification'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.ResponseHTTP'
+      security:
+      - Bearer: []
+      summary: GetNotification
+      tags:
+      - Notification
+  /api/v1/notification/fcm:
+    post:
+      consumes:
+      - application/json
+      description: SaveToken
+      parameters:
+      - description: Otp login
+        in: body
+        name: '{object}'
+        required: true
+        schema:
+          $ref: '#/definitions/notification.PushToken'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.ResponseHTTP'
+            - properties:
+                data:
+                  $ref: '#/definitions/notification.Notification'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.ResponseHTTP'
+      security:
+      - Bearer: []
+      summary: SaveToken
+      tags:
+      - Notification
+  /api/v1/notification/list:
+    get:
+      consumes:
+      - application/json
+      description: Get Notification List
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.ResponseHTTP'
+            - properties:
+                data:
+                  $ref: '#/definitions/notification.Notification'
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/utils.ResponseHTTP'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/utils.ResponseHTTP'
+      security:
+      - Bearer: []
+      summary: Notification List
+      tags:
+      - Notification
+  /api/v1/user:
+    get:
+      consumes:
+      - application/json
+      description: GetUser User
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.ResponseHTTP'
+            - properties:
+                data:
+                  $ref: '#/definitions/user.User'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.ResponseHTTP'
+      security:
+      - Bearer: []
+      summary: GetUser
+      tags:
+      - login
+  /api/v1/user/update:
+    put:
+      consumes:
+      - application/json
+      description: GetUser User
+      parameters:
+      - description: Update user
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/user.User'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.ResponseHTTP'
+            - properties:
+                data:
+                  $ref: '#/definitions/user.User'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.ResponseHTTP'
+      security:
+      - Bearer: []
+      summary: GetUser
+      tags:
+      - login
+securityDefinitions:
+  Bearer:
+    description: This is an API for UstAI Application
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
